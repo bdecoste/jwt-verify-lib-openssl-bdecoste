@@ -96,6 +96,14 @@ START_OFFSET="-1"
 ADD_TEXT=""
 replace_text
 
+FILE="BUILD"
+DELETE_START_PATTERN="\"//external:protobuf\","
+DELETE_STOP_PATTERN=""
+START_OFFSET="0"
+ADD_TEXT="        \"//external:protobuf\",
+        \"//external:bssl_wrapper_lib\","
+replace_text
+
 OPENSSL_REPO="
 new_local_repository(
     name = \"openssl\",
