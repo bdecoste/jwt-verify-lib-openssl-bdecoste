@@ -98,10 +98,12 @@ replace_text
 
 FILE="BUILD"
 DELETE_START_PATTERN="\"//external:protobuf\","
-DELETE_STOP_PATTERN=""
+DELETE_STOP_PATTERN="\"//external:ssl\","
 START_OFFSET="0"
 ADD_TEXT="        \"//external:protobuf\",
-        \"//external:bssl_wrapper_lib\","
+        \"//external:bssl_wrapper_lib\",
+        \"//external:openssl_cbs_lib\",
+        \"@openssl//:openssl-lib\","
 replace_text
 
 OPENSSL_REPO="
