@@ -69,16 +69,16 @@ ADD_TEXT="def bsslwrapper_repositories(bind = True):
 def opensslcbs_repositories(bind = True):
     http_archive(
         name = \"openssl_cbs\",
-        strip_prefix = \"openssl-cbs-563fe95a2d5690934f903d9ebb3d9bbae40fc93f\",
-        url = \"https://github.com/bdecoste/openssl-cbs/archive/563fe95a2d5690934f903d9ebb3d9bbae40fc93f.tar.gz\",
-        sha256 = \"44453d398994a8d8fa540b2ffb5bbbb0a414c030236197e224ee6298adb53bdb\",
+        strip_prefix = \"openssl-cbs-ff2073026cc8d14ae24e082f1207aae887371022\",
+        url = \"https://github.com/bdecoste/openssl-cbs/archive/ff2073026cc8d14ae24e082f1207aae887371022.tar.gz\",
+        sha256 = \"c9deb738a27a94fbc2f5dfa3f788a50c23fed40922d4d396e8c15777213873e1\",
     )
 
     if bind:
         native.bind(
             name = \"openssl_cbs_lib\",
             actual = \"@openssl_cbs//:openssl_cbs_lib\",
-        )
+    )
 "
 replace_text
 
@@ -104,6 +104,22 @@ ADD_TEXT="        \"//external:protobuf\",
         \"//external:bssl_wrapper_lib\",
         \"//external:openssl_cbs_lib\",
         \"@openssl//:openssl-lib\","
+replace_text
+
+FILE="WORKSPACE"
+DELETE_START_PATTERN="\"boringssl_repositories\","
+DELETE_STOP_PATTERN=""
+START_OFFSET="0"
+ADD_TEXT="    \"bsslwrapper_repositories\",
+    \"opensslcbs_repositories\","
+replace_text
+
+FILE="WORKSPACE"
+DELETE_START_PATTERN="boringssl_repositories()"
+DELETE_STOP_PATTERN=""
+START_OFFSET="0"
+ADD_TEXT="bsslwrapper_repositories()
+opensslcbs_repositories()"
 replace_text
 
 OPENSSL_REPO="

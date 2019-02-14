@@ -58,7 +58,6 @@ class EvpPkeyGetter : public WithStatus {
  public:
   // Create EVP_PKEY from PEM string
   bssl::UniquePtr<EVP_PKEY> createEvpPkeyFromStr(const std::string& pkey_pem) {
-	  std::cerr << "!!!!!!!!!!!!!!!! createEvpPkeyFromStr \n";
     // Header "-----BEGIN CERTIFICATE ---"and tailer "-----END CERTIFICATE ---"
     // should have been removed.
 
@@ -69,7 +68,7 @@ class EvpPkeyGetter : public WithStatus {
 	}
 
 	bssl::UniquePtr<RSA> rsa = bssl::UniquePtr<RSA>(
-        Openssl::Cbs::public_key_from_bytes(castToUChar(pkey_der), pkey_der.length()));
+        RSA_public_key_from_bytes(castToUChar(pkey_der), pkey_der.length()));
 
 
     if (!rsa) {
@@ -81,13 +80,11 @@ class EvpPkeyGetter : public WithStatus {
 
   bssl::UniquePtr<EVP_PKEY> createEvpPkeyFromJwkRSA(const std::string& n,
                                                     const std::string& e) {
-	  std::cerr << "!!!!!!!!!!!!!!!! createEvpPkeyFromJwkRSA \n";
     return createEvpPkeyFromRsa(createRsaFromJwk(n, e).get());
   }
 
   bssl::UniquePtr<EC_KEY> createEcKeyFromJwkEC(const std::string& x,
                                                const std::string& y) {
-	  std::cerr << "!!!!!!!!!!!!!!!! createEcKeyFromJwkEC \n";
     bssl::UniquePtr<EC_KEY> ec_key(
         EC_KEY_new_by_curve_name(NID_X9_62_prime256v1));
     if (!ec_key) {
@@ -133,21 +130,18 @@ class EvpPkeyGetter : public WithStatus {
 
   bssl::UniquePtr<RSA> createRsaFromJwk(const std::string& n,
                                           const std::string& e) {
-	  std::cerr << "!!!!!!!!!!!!!!!! createRsaFromJwk \n";
 	bssl::UniquePtr<RSA> rsa(RSA_new());
 	BIGNUM *bn_n = createBigNumFromBase64UrlString(n);
 	BIGNUM *bn_e = createBigNumFromBase64UrlString(e);
 
 	if (bn_n == nullptr || bn_e == nullptr) {
       // RSA public key field is missing or has parse error.
-		  std::cerr << "!!!!!!!!!!!!!!!! createRsaFromJwk JwksRsaParseError 1\n";
       updateStatus(Status::JwksRsaParseError);
 	  return nullptr;
 	}
 
-	if (Openssl::Cbs::bn_cmp_word(bn_e, 3) != 0 && Openssl::Cbs::bn_cmp_word(bn_e, 65537) != 0) {
+	if (BN_cmp_word(bn_e, 3) != 0 && BN_cmp_word(bn_e, 65537) != 0) {
       // non-standard key; reject it early.
-		  std::cerr << "!!!!!!!!!!!!!!!! createRsaFromJwk JwksRsaParseError 2\n";
 
 	  BN_free(bn_n);
 	  BN_free(bn_e);
@@ -158,14 +152,12 @@ class EvpPkeyGetter : public WithStatus {
 	}
 
 	int success = RSA_set0_key(rsa.get(), bn_n, bn_e, NULL);
-	std::cerr << "!!!!!!!!!!!!!!!! createRsaFromJwk success " << success << " \n";
 	return rsa;
   }
 };
 
 Status extractJwkFromJwkRSA(const ::google::protobuf::Struct& jwk_pb,
                             Jwks::Pubkey* jwk) {
-	std::cerr << "!!!!!!!!!!!!!!!! extractJwkFromJwkRSA \n";
 
   if (jwk->alg_specified_ &&
       (jwk->alg_.size() < 2 || jwk->alg_.compare(0, 2, "RS") != 0)) {
