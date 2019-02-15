@@ -106,6 +106,22 @@ ADD_TEXT="        \"//external:protobuf\",
         \"@openssl//:openssl-lib\","
 replace_text
 
+FILE="WORKSPACE"
+DELETE_START_PATTERN="\"boringssl_repositories\","
+DELETE_STOP_PATTERN=""
+START_OFFSET="0"
+ADD_TEXT="    \"bsslwrapper_repositories\",
+    \"opensslcbs_repositories\","
+replace_text
+
+FILE="WORKSPACE"
+DELETE_START_PATTERN="boringssl_repositories()"
+DELETE_STOP_PATTERN=""
+START_OFFSET="0"
+ADD_TEXT="bsslwrapper_repositories()
+opensslcbs_repositories()"
+replace_text
+
 OPENSSL_REPO="
 new_local_repository(
     name = \"openssl\",
