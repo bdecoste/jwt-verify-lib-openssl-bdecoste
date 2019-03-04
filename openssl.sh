@@ -33,11 +33,14 @@ function replace_text() {
   else
     CUT=$((${START}))
   fi
-  CUT_TEXT=$(sed -n "${START},${CUT} p" ${SOURCE_DIR}/${FILE})
-  sed -i "${START},${CUT} d" ${SOURCE_DIR}/${FILE}
 
-  if [[ ! -z "${ADD_TEXT}" ]]; then
-    ex -s -c "${START}i|${ADD_TEXT}" -c x ${SOURCE_DIR}/${FILE}
+  if [ "${START}" != "0" ]; then 
+    CUT_TEXT=$(sed -n "${START},${CUT} p" ${SOURCE_DIR}/${FILE})
+    sed -i "${START},${CUT} d" ${SOURCE_DIR}/${FILE}
+
+    if [[ ! -z "${ADD_TEXT}" ]]; then
+      ex -s -c "${START}i|${ADD_TEXT}" -c x ${SOURCE_DIR}/${FILE}
+    fi
   fi
 }
 
